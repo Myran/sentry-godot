@@ -211,10 +211,33 @@ if platform == "ios":
     simulator_lib = f"{temp_dir}/libsentry.{platform}.{build_type}.universal.simulator.dylib"
     xcframework_path = f"{out_dir}/libsentry.{platform}.{build_type}.xcframework"
 
-    ios_framework = env.CreateXCFrameworkFromLibs(
-        framework_path=xcframework_path,
-        libraries=[device_lib, simulator_lib],
-    )
+    # Check if we're building for device-only (no simulator)
+    if not env.get("ios_simulator", False):
+        # Device-only build: Create XCFramework from single library
+        dylib_name = f"libsentry.{platform}.{build_type}.arm64.dylib"
+        ios_framework = env.Command(
+            target=xcframework_path,
+            source=device_lib,
+            action=[
+                # Clean up any existing temp directory and XCFramework
+                f"rm -rf {out_dir}/temp_xcframework",
+                f"rm -rf {xcframework_path}",
+                # Create temp directory structure for single-library XCFramework
+                f"mkdir -p {out_dir}/temp_xcframework",
+                # Copy the dylib to temp framework structure
+                f"cp {device_lib} {out_dir}/temp_xcframework/{dylib_name}",
+                # Create XCFramework from single library
+                f"xcodebuild -create-xcframework -library {out_dir}/temp_xcframework/{dylib_name} -output {xcframework_path}",
+                # Clean up temp directory
+                f"rm -rf {out_dir}/temp_xcframework"
+            ]
+        )
+    else:
+        # Device + Simulator build: Use existing tool
+        ios_framework = env.CreateXCFrameworkFromLibs(
+            framework_path=xcframework_path,
+            libraries=[device_lib, simulator_lib],
+        )
     Alias("ios_framework", ios_framework)
 
     if env["generate_ios_framework"]:
