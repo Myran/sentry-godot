@@ -109,11 +109,8 @@ void CocoaSDK::log(LogLevel p_level, const String &p_body, const Dictionary &p_a
 
 	String body = p_body;
 
-	NSMutableDictionary *attributes = nil;
-
+	NSMutableDictionary *attributes = [[NSMutableDictionary alloc] initWithCapacity:p_attributes.size()];
 	if (!p_attributes.is_empty()) {
-		attributes = [[NSMutableDictionary alloc] initWithCapacity:p_attributes.size() + 1];
-
 		const Array &keys = p_attributes.keys();
 		for (int i = 0; i < keys.size(); i++) {
 			const String &key = keys[i];
@@ -149,8 +146,10 @@ void CocoaSDK::log(LogLevel p_level, const String &p_body, const Dictionary &p_a
 								 attributes:attributes];
 		} break;
 		default: {
-			[[objc::SentrySDK logger] debug:string_to_objc(body)
-								 attributes:attributes];
+			sentry::logging::print_no_logger(LEVEL_WARNING,
+					vformat("Sentry: Unexpected log level: %d, defaulting to info.", static_cast<int>(p_level)));
+			[[objc::SentrySDK logger] info:string_to_objc(body)
+								attributes:attributes];
 		} break;
 	}
 }
@@ -264,7 +263,7 @@ void CocoaSDK::init(const PackedStringArray &p_global_attachments, const Callabl
 		// NOTE: This only works for captureMessage(), unfortunately.
 		options.attachStacktrace = false;
 
-		options.experimental.enableLogs = SentryOptions::get_singleton()->get_experimental()->get_enable_logs();
+		options.experimental.enableLogs = SentryOptions::get_singleton()->get_enable_logs();
 
 		options.initialScope = ^(objc::SentryScope *scope) {
 			// Add global attachments
@@ -309,7 +308,7 @@ void CocoaSDK::init(const PackedStringArray &p_global_attachments, const Callabl
 			}
 		};
 
-		if (SentryOptions::get_singleton()->get_experimental()->before_send_log.is_valid()) {
+		if (SentryOptions::get_singleton()->get_before_send_log().is_valid()) {
 			options.beforeSendLog = ^objc::SentryLog *(objc::SentryLog *log) {
 				Ref<CocoaLog> log_obj = memnew(CocoaLog(log));
 				Ref<CocoaLog> processed = sentry::process_log(log_obj);

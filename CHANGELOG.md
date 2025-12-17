@@ -1,5 +1,57 @@
 # Changelog
 
+## Unreleased
+
+### Dependencies
+
+- Bump Sentry Android from v8.28.0 to v8.29.0 ([#465](https://github.com/getsentry/sentry-godot/pull/465))
+  - [changelog](https://github.com/getsentry/sentry-java/blob/main/CHANGELOG.md#8290)
+  - [diff](https://github.com/getsentry/sentry-java/compare/8.28.0...8.29.0)
+
+## 1.2.0
+
+### Features
+
+- Structured Logs are now generally available and enabled by default ([#460](https://github.com/getsentry/sentry-godot/pull/460))
+- String interpolation and custom attributes support in structured logging API ([#435](https://github.com/getsentry/sentry-godot/pull/435))
+
+### Fixes
+
+- Fix User Feedback UI text cursor visibility in default theme ([#445](https://github.com/getsentry/sentry-godot/pull/445))
+- Fix custom tags missing in native crashes on Android ([#454](https://github.com/getsentry/sentry-godot/pull/454))
+
+### Dependencies
+
+- Bump Sentry Android from v8.25.0 to v8.28.0 ([#444](https://github.com/getsentry/sentry-godot/pull/444), [#452](https://github.com/getsentry/sentry-godot/pull/452), [#458](https://github.com/getsentry/sentry-godot/pull/458))
+  - [changelog](https://github.com/getsentry/sentry-java/blob/main/CHANGELOG.md#8280)
+  - [diff](https://github.com/getsentry/sentry-java/compare/8.25.0...8.28.0)
+- Bump Cocoa SDK from v8.57.2 to v8.57.3 ([#448](https://github.com/getsentry/sentry-godot/pull/448))
+  - [changelog](https://github.com/getsentry/sentry-cocoa/blob/main/CHANGELOG.md#8573)
+  - [diff](https://github.com/getsentry/sentry-cocoa/compare/8.57.2...8.57.3)
+- Bump Native SDK from v0.12.1 to v0.12.2 ([#455](https://github.com/getsentry/sentry-godot/pull/455))
+  - [changelog](https://github.com/getsentry/sentry-native/blob/master/CHANGELOG.md#0122)
+  - [diff](https://github.com/getsentry/sentry-native/compare/0.12.1...0.12.2)
+
+## 1.1.1
+
+### Fixes
+
+- Fixed SentryLog.set_attribute() not working on Android ([#438](https://github.com/getsentry/sentry-godot/pull/438))
+- Fixed occasional crash on exit on Android ([#439](https://github.com/getsentry/sentry-godot/pull/439))
+- Initialize attributes dict in CocoaSDK::log unconditionally ([#440](https://github.com/getsentry/sentry-godot/pull/440))
+
+### Dependencies
+
+- Bump Cocoa SDK from v8.57.0 to v8.57.2 ([#432](https://github.com/getsentry/sentry-godot/pull/432))
+  - [changelog](https://github.com/getsentry/sentry-cocoa/blob/main/CHANGELOG.md#8572)
+  - [diff](https://github.com/getsentry/sentry-cocoa/compare/8.57.0...8.57.2)
+- Bump Native SDK from v0.11.3 to v0.12.1 ([#431](https://github.com/getsentry/sentry-godot/pull/431))
+  - [changelog](https://github.com/getsentry/sentry-native/blob/master/CHANGELOG.md#0121)
+  - [diff](https://github.com/getsentry/sentry-native/compare/0.11.3...0.12.1)
+- Bump Sentry Android from v8.24.0 to v8.25.0 ([#430](https://github.com/getsentry/sentry-godot/pull/430))
+  - [changelog](https://github.com/getsentry/sentry-java/blob/main/CHANGELOG.md#8250)
+  - [diff](https://github.com/getsentry/sentry-java/compare/8.24.0...8.25.0)
+
 ## 1.1.0
 
 ### Features
