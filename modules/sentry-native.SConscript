@@ -115,6 +115,11 @@ if platform == "windows":
         cmake_arch = "-A Win32"
     elif arch == "x86_64":
         cmake_arch = "-A x64"
+        # Add toolchain file for ARM64 Windows cross-compilation to x64
+        # This sets CMAKE_GENERATOR_PLATFORM properly for crashpad assembly
+        toolchain_path = os.environ.get("SENTRY_WIN_X64_TOOLCHAIN", "")
+        if toolchain_path:
+            cmake_arch += f' -DCMAKE_TOOLCHAIN_FILE="{toolchain_path}"'
     else:
         print(f"ERROR: Unsupported architecture '{arch}' for platform '{platform}'")
         Exit(1)
