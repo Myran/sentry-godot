@@ -117,7 +117,13 @@ if platform == "windows":
         cmake_arch = "-A x64"
         # Add toolchain file for ARM64 Windows cross-compilation to x64
         # This sets CMAKE_GENERATOR_PLATFORM properly for crashpad assembly
+        # Prefer repo-relative path, fall back to environment variable
         toolchain_path = os.environ.get("SENTRY_WIN_X64_TOOLCHAIN", "")
+        if not toolchain_path:
+            # Use repo-relative win_x64.cmake if available
+            repo_toolchain = Dir("#/win_x64.cmake").abspath
+            if os.path.exists(repo_toolchain):
+                toolchain_path = repo_toolchain
         if toolchain_path:
             cmake_arch += f' -DCMAKE_TOOLCHAIN_FILE="{toolchain_path}"'
     else:
