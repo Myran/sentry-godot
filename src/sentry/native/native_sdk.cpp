@@ -415,7 +415,8 @@ void NativeSDK::init(const PackedStringArray &p_global_attachments, const Callab
 		}
 	}
 
-	sentry_options_set_logs_with_attributes(options, true);
+	// Note: sentry_options_set_logs_with_attributes() not available in sentry-native 0.11.3
+	// TODO: Upgrade sentry-native to enable structured logs with attributes
 
 	// Hooks.
 	sentry_options_set_before_send(options, _handle_before_send, NULL);
