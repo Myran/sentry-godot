@@ -121,7 +121,7 @@ if platform == "windows":
         toolchain_path = os.environ.get("SENTRY_WIN_X64_TOOLCHAIN", "")
         if not toolchain_path:
             # Use repo-relative win_x64.cmake if available
-            repo_toolchain = Dir("#/win_x64.cmake").abspath
+            repo_toolchain = str(Dir("#").abspath) + "/win_x64.cmake"
             if os.path.exists(repo_toolchain):
                 toolchain_path = repo_toolchain
         if toolchain_path:
