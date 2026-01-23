@@ -30,6 +30,7 @@ local.properties
 # Objects
 *.o
 *.os
+*.os.tmp
 *.so
 *.obj
 *.bc
