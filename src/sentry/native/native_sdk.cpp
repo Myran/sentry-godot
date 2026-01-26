@@ -439,11 +439,14 @@ void NativeSDK::init(const PackedStringArray &p_global_attachments, const Callab
 }
 
 void NativeSDK::close() {
-	int err = sentry_close();
+	// sentry_close() returns the number of envelopes successfully dumped for
+	// offline delivery, NOT an error code. Any value >= 0 indicates success.
+	int dumped_envelopes = sentry_close();
 	initialized = false;
 
-	if (err != 0) {
-		ERR_PRINT("Sentry: Failed to close native SDK cleanly. Error code: " + itos(err));
+	if (dumped_envelopes > 0) {
+		sentry::logging::print_debug("Sentry: Closed native SDK, dumped " +
+			itos(dumped_envelopes) + " envelope(s) for offline delivery");
 	}
 }
 
