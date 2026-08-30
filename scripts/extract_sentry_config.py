@@ -111,55 +111,6 @@ def generate_android_metadata(config):
 
     return '\n'.join(metadata_lines)
 
-def generate_ios_config(config):
-    """Generate iOS Sentry configuration file"""
-
-    dsn = config.get('ios/dsn', '')
-    # Remove surrounding quotes if present
-    dsn = dsn.strip('"')
-    debug = config.get('ios/debug', 'true').strip('"')
-    send_pii = config.get('ios/send_default_pii', 'true').strip('"')
-    screenshot = config.get('ios/attach_screenshot', 'true').strip('"')
-    traces_rate = config.get('ios/traces_sample_rate', '1.0')
-    environment = config.get('ios/environment', 'development').strip('"')
-    release = config.get('ios/release', '1.0.0').strip('"')
-
-    config_lines = [
-        '<?xml version="1.0" encoding="UTF-8"?>',
-        '<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">',
-        '<plist version="1.0">',
-        '<dict>',
-        '    <!-- Required: set your sentry.io project identifier (DSN) -->',
-        f'    <key>io.sentry.dsn</key>',
-        f'    <string>{dsn}</string>',
-        '',
-        '    <!-- Environment and release information -->',
-        f'    <key>io.sentry.environment</key>',
-        f'    <string>{environment}</string>',
-        f'    <key>io.sentry.release</key>',
-        f'    <string>{release}</string>',
-        '',
-        f'    <!-- Debug mode -->',
-        f'    <key>io.sentry.debug</key>',
-        f'    <{debug.lower()} />',
-        '',
-        '    <!-- Add data like request headers, user ip address and device name -->',
-        f'    <key>io.sentry.send-default-pii</key>',
-        f'    <{send_pii.lower()} />',
-        '',
-        '    <!-- enable screenshot for crashes -->',
-        f'    <key>io.sentry.attach-screenshot</key>',
-        f'    <{screenshot.lower()} />',
-        '',
-        '    <!-- enable the performance API by setting a sample-rate, adjust in production env -->',
-        f'    <key>io.sentry.traces.sample-rate</key>',
-        f'    <real>{traces_rate}</real>',
-        '</dict>',
-        '</plist>'
-    ]
-
-    return '\n'.join(config_lines)
-
 def main():
     """Main function"""
     print("🔧 Extracting Sentry configuration from project.godot...")
@@ -173,9 +124,6 @@ def main():
 
     # Generate Android metadata content
     android_metadata = generate_android_metadata(sentry_config)
-
-    # Generate iOS configuration content
-    ios_config = generate_ios_config(sentry_config)
 
     # Write Android metadata file
     try:
@@ -194,25 +142,10 @@ def main():
         print(f"❌ Failed to write Android metadata file: {e}")
         return 1
 
-    # Write iOS configuration file
-    try:
-        # iOS configuration goes to export/ios directory
-        ios_config_path = project_root / "export" / "ios" / "sentry_config.plist"
-
-        ios_config_path.parent.mkdir(exist_ok=True)
-        with open(ios_config_path, 'w') as f:
-            f.write(ios_config)
-
-        print(f"✅ Generated iOS Sentry configuration: {ios_config_path}")
-        print(f"📝 iOS DSN extracted: {sentry_config.get('ios/dsn', 'NOT_FOUND')}")
-
-    except Exception as e:
-        print(f"❌ Failed to write iOS configuration file: {e}")
-        return 1
-
+    # Android-only on purpose: project.godot has no [sentry] ios/* keys, so generating
+    # export/ios/sentry_config.plist wrote an empty DSN over the committed iOS one (task-1706)
     print("✅ Sentry configuration extraction completed successfully!")
     print("   🤖 Generated Android metadata for AndroidManifest.xml")
-    print("   🍎 Generated iOS plist configuration for iOS export")
     return 0
 
 if __name__ == "__main__":
